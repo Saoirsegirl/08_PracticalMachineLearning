@@ -1,0 +1,17 @@
+---
+title: "08_Identifying Proper Exercise Technique Using Accelerometer Data"
+author: "Barb Dornseif - Saoirsegirl"
+date: "April 23, 2015"
+output:
+  html_document:
+    fig_caption: yes
+    fig_height: 4
+    fig_width: 6
+    keep_md: yes
+    theme: readable
+---
+# Summary:  
+The following analysis will evaluate the data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. Each participants was asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
+
+
+You should create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, and why you made the choices you did. You will also use your prediction model to predict 20 different test cases. 

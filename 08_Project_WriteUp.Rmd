@@ -11,7 +11,72 @@ output:
     theme: readable
 ---
 # Summary:  
-The following analysis will evaluate the data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. Each participants was asked to perform barbell lifts correctly and incorrectly in 5 different ways. 
+The following analysis will evaluate a data set taken from a set of accelerometers placed on the belt, forearm, arm, and dumbell of six (6) participants. These six participants were asked to perform one set of 10 repetitions of the Unilateral Dumbbell Biceps Curl in five different fashions:  
+    - Class A: exactly according to the specification
+    - Class B: throwing the elbows to the front  
+    - Class C: lifting the dumbbell only halfway  
+    - Class D: lowering the dumbbell only halfway  
+    _ Class E: throwing the hips to the front  
+Class A is considered a correct execution of the excercise.  
+
+From this data set, a series of model algorithms were run and it was detirmined that a Random Forrest model yielded the best accuracy in predicting the outcomes on the test set.
+
+# Data Extraction, Formatting and Examinations
+The data provided by the original study designers was made available at the [Weight Lifting Excercise summary page](http://groupware.les.inf.puc-rio.br/static/WLE/WearableComputing_weight_lifting_exercises_biceps_curl_variations.csv)  however for the class were were expected to use a shortened version for [training](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv ) and 20 random rows for [testing](https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv).  
+
+For purposes of this analysis the data was brought in as follows:
+```{r import, eval=FALSE, echo=TRUE }
+library(caret)
+setwd("~/Documents/Coursera/08-PracticalMachineLearning/08_Project")
+trainURL <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+testURL <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+download.file(trainURL, "./Data/training.csv", method = "curl")
+download.file(testURL, "./Data/testing.csv", method = "curl")
+```  
+
+The training data file was loaded into R with the name trainRaw. Several iterations were run to successfully load the data in a manner that allowed for subsequent tidying, and model building. To aid these iterations, a data.frame was created with the names, formats, and existance of NAs - trainRaw_str. This DF was used to apply logic for "Usability", which in turn provide the list of usable columns. The functions summary(), str(), and head() where used as well. The final import specifications are below. For brevity, the iterations of function use are not. The goal of this steps was to remove any column with a high percentage of NAs or blank inputs in order to shorten the processing time of subsequent models.  This step reduced the Raw file width from 160 columns to 53 columns of data. The new file "use" was then used to complete the segmentation for training and validation.  
+``` {r LoadAndTrim, cache=TRUE}
+## Load the data - iterations were run to detirmine final function variables
+trainRaw <- read.table("./Data/training.csv", header = TRUE, sep = ",",
+                    stringsAsFactors = FALSE) # we will transform the outcome to a factor variable later
+# first make a data.frame of the name, class, and existance of NA for each column
+cNames <- names(trainRaw)
+cClass <- as.character()
+for (i in 1:dim(trainRaw)[2])  {cClass <- c(cClass, class(trainRaw[ , i]))}
+hasNA <- as.character()
+for (i in 1:dim(trainRaw)[2])  {
+    hasNA <- c(hasNA, anyNA(trainRaw[ , i]))}
+trainRaw_str <- as.data.frame(cbind(cNames = cNames, cClass = cClass, hasNA = hasNA), stringsAsFactors = FALSE)
+
+# now evaluate the metrics for suitability for use - in this case having no NA and being a metric
+useCol <- as.numeric()
+for (i in 8:159) {
+    if (trainRaw_str[i, 2] != "character") {
+        if (trainRaw_str[i, 3] == "FALSE") {
+            useCol <- c(useCol, as.numeric(i))  } } }
+
+# create the usable training set and a pre-test evaluator set
+use <- trainRaw[ , c(160, useCol)]
+use[ ,1] <- as.factor(use[ , 1])
+set.seed <- 432
+inTrain <- createDataPartition(y=use$classe, # vector of outcomes
+                               p = 0.80, # Percentage to training
+                               list=FALSE) 
+training <- use[inTrain, ] 
+compare <- use[ - inTrain, ]
+summary(training)
+
+```
+
+You should create a report describing how you built your model, 
+how you used cross validation, 
+what you think the expected out of sample error is, 
+and why you made the choices you did. 
+You will also use your prediction model to predict 20 different test cases. 
 
 
-You should create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, and why you made the choices you did. You will also use your prediction model to predict 20 different test cases. 
+ 
+
+
+Read more: http://groupware.les.inf.puc-rio.br/har#ixzz3YCIDMg00
+Citations and Thanks - Velloso, E.; Bulling, A.; Gellersen, H.; Ugulino, W.; Fuks, H.  "Qualitative Activity Recognition of Weight Lifting Exercises" Read more: http://groupware.les.inf.puc-rio.br/work.jsf?p1=11201#ixzz3YCGaaFml 

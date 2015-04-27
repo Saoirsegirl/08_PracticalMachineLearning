@@ -45,11 +45,18 @@ summary(training)
 cMeans <- apply(training[2:53], 2, FUN = mean)
 cStdDev <- apply(training[2:53], 2, FUN = sd)
 evalSpread <- as.data.frame(cbind(cMeans, cStdDev, index = rep(1:52)))
+<<<<<<< HEAD
 par(mfrow = c(1,2))
 qplot(cMeans, cStdDev, data = evalSpread)
 qplot(index, cMeans, data = evalSpread)
 par(mfrow = c(1,2))
 plot(training$roll_belt, col=training$classe)
+=======
+
+qplot(index, cStdDev, data = evalSpread)
+qplot(index, cMeans, data = evalSpread)
+plot(training$total_accel_belt, col=training$classe)
+>>>>>>> 482ce32fab1f39da2c1e936c115e673b4937f0c8
 
 # fit, predict and cross-validate a Tree Model
 fitBit_tree <- train(classe ~ . , method = "rpart", data = training)
@@ -61,9 +68,12 @@ text(fitBit_tree$finalModel, use.n = TRUE, all=TRUE, cex = 1)
 predict_tree <- predict(fitBit_tree,newdata=compare)
 confusionMatrix(predict_tree, compare$classe)
 resample_tree <- print(fitBit_tree$resample)
+<<<<<<< HEAD
 hist(resample_tree[[ , 1])
      
 )
+=======
+>>>>>>> 482ce32fab1f39da2c1e936c115e673b4937f0c8
 # Accuracy .4922
 
 # fit, predict and cross-validate a Random Forrest Model
@@ -73,6 +83,7 @@ resample_rf <- print(fitBit_rf$resample)
 par(mfrow = c(1,1))
 #plot(fitBit_tree$finalModel, uniform = TRUE)
 #text(fitBit_tree$finalModel, use.n = TRUE, all=TRUE, cex = 1)
+<<<<<<< HEAD
 predict_rf1 <- predict(fitBit_rf, newdata=compare)
 confusionMatrix(predict_rf1, compare$classe)
 # Accuracy = 0.9949
@@ -113,3 +124,38 @@ pml_write_files = function(x){
 }
 pml_write_files(answers)
 -----------------------
+=======
+predict_rf <- predict(fitBit_rf, newdata=compare)
+
+confusionMatrix(predict_rf, compare$classe)
+# Accuracy = 
+
+
+
+fitBit_gbm <- train(classe ~ ., method = 'gbm', data = training, verbose = FALSE)
+qplot(predict(fitBit_gbm, compare),wage,data=compare[1])
+
+fitBit_rf <- randomForest(training[ , 2:53], training[ , 1]) 
+-----------------------
+head(aggregate(X ~ user_name + classe  + num_window, FUN = length, dat = Train),20)
+17 features were selected:
+    in the belt, 
+        mean [8,28] and variance [30] of the roll, 2
+        maximum, range and variance of the accelerometer vector, 3
+        variance of the gyro  1
+        variance of the magnetometer. 1 
+    In the arm, 
+        variance of the accelerometer vector  1
+        maximum and minimum of the magnetometer  2 
+    In the dumbbell, 
+        maximum of the acceleration,  1
+        variance of the gyro  1
+        maximum and minimum of the magnetometer   2
+    in the glove, 
+        sum of the pitch   1
+        maximum and minimum of the gyro   2
+
+inTrain <- createDataPartition(y=Train$classe, # vector of outcomes
+                               p = 0.75, # Percentage to training
+                               list=FALSE) 
+>>>>>>> 482ce32fab1f39da2c1e936c115e673b4937f0c8

@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 *.RData
 Answers/
 08_Project_WriteUp_cache/
 Data/
+=======
+08_Project_WriteUp_cache/
+Answers/
+08_Project_WriteUp_cache/
+>>>>>>> 482ce32fab1f39da2c1e936c115e673b4937f0c8
